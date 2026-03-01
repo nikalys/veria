@@ -31,7 +31,7 @@ async function init() {
 
     // Load content data
     try {
-        const response = await fetch('data/content.json');
+        const response = await fetch('app/data/content.json');
         state.contentData = await response.json();
         console.log(`✓ Loaded ${Object.keys(state.contentData.components || {}).length} components`);
         console.log(`✓ Loaded ${Object.keys(state.contentData.styles || {}).length} styles`);
@@ -42,7 +42,7 @@ async function init() {
 
     // Load manifest (for sidebar nav structure)
     try {
-        const response = await fetch('data/manifest.json');
+        const response = await fetch('app/data/manifest.json');
         state.manifest = await response.json();
     } catch (err) {
         console.warn('could not fetch manifest via network, trying local state...');
@@ -283,6 +283,7 @@ function renderEntry(type, id) {
                     </div>
                 </div>
                 <div class="split-right">
+                    <div class="showcase-header">visual examples</div>
                     ${renderStyleShowcase(id)}
                 </div>
             </div>

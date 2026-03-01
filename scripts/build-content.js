@@ -8,11 +8,11 @@ const fs = require('fs');
 const path = require('path');
 
 const CONTENT_DIR = path.join(__dirname, '..', 'content');
-const OUTPUT_FILE = path.join(__dirname, 'data', 'content.json');
+const OUTPUT_FILE = path.join(__dirname, '..', 'app', 'data', 'content.json');
 
 function parseMarkdown(filePath) {
     const text = fs.readFileSync(filePath, 'utf-8');
-    
+
     const data = {
         title: '',
         definition: '',
@@ -113,7 +113,7 @@ function buildContentJSON() {
     if (fs.existsSync(componentsDir)) {
         const files = fs.readdirSync(componentsDir).filter(f => f.endsWith('.md'));
         console.log(`📝 Found ${files.length} component files`);
-        
+
         files.forEach(file => {
             const slug = fileToSlug(file);
             const filePath = path.join(componentsDir, file);
@@ -133,7 +133,7 @@ function buildContentJSON() {
     if (fs.existsSync(stylesDir)) {
         const files = fs.readdirSync(stylesDir).filter(f => f.endsWith('.md'));
         console.log(`🎨 Found ${files.length} style files`);
-        
+
         files.forEach(file => {
             const slug = fileToSlug(file);
             const filePath = path.join(stylesDir, file);

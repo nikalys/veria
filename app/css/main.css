@@ -567,6 +567,23 @@ body {
     position: relative;
 }
 
+.showcase-header {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-xl);
+    background-color: var(--bg-base);
+    border-bottom: 1px solid var(--border-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
 .split-left .entry-header {
     margin-bottom: var(--space-2xl);
 }
