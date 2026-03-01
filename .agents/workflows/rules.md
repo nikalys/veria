@@ -18,7 +18,7 @@ This workflow governs how you approach building and modifying this project. Foll
 
 4. **Ask before making design decisions.** Do not independently choose a design direction (brutalist, minimalist, glassmorphism, etc.) without first confirming with the user. Present 2-3 options if uncertain.
 
-5. **Ask before using the browser.** Never use the `browser_subagent` or any browser-based testing tools without explicit permission from the user.
+5. **Ask before using the browser.** Never use the `browser_subagent` or any browser-based testing tools without explicit, per-task permission from the user. Permission granted for one audit does not carry over to subsequent tasks or fixes.
 
 ---
 
@@ -37,4 +37,4 @@ When modifying an existing page:
 
 - ❌ Rewriting an entire file when only 10 lines need to change
 - ❌ Writing copy that sounds robotic or overly corporate ("Initiate Contact", "System Parameters")
-- ❌ Using the browser for verification/testing without explicit approval
+- ❌ Using the browser for verification/testing without explicit, per-task approval

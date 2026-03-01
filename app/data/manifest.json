@@ -1,28 +1,50 @@
 {
-  "styles": [
-    "abstract_expressionist", "art_deco", "aurora_gradient_mesh", "bauhaus", "bento_grid", 
-    "brutalism", "claymorphism", "clean_functionalism", "corporate_memphis", "cottagecore", 
-    "cyberpunk", "dark_glassmorphism", "dark_luxury", "dark_mode", "data_visualization", 
-    "dopamine_design", "editorial_magazine", "flat_design", "frosted_glass_light", "glassmorphism", 
-    "grain_texture_matte", "handcrafted_zine", "holographic_iridescent", "industrial_utilitarian", 
-    "isometric_3d", "material_design", "maximalism", "memphis_design", "metallic_chrome", 
-    "minimalism", "monospace_terminal", "neobrutalism", "neumorphism", "newspaper_print", 
-    "organic_natural", "pastel_kawaii", "pixel_art_8bit", "psychedelic_groovy", "retro_futurism", 
-    "retro_web", "serif_luxury", "skeuomorphism", "soft_pastel_minimal", "solarpunk", 
-    "swiss_design", "synthwave", "typographic_editorial", "vaporwave", "wireframe_blueprint", 
-    "y2k_frutiger_aero"
-  ],
-  "components": [
-    "accordion", "alert_callout_box", "app_shell", "avatar", "badge_pill_tag", 
-    "banner_announcement_bar", "bento_grid", "breadcrumbs", "button", "card", 
-    "carousel_slider", "cta_block", "data_table", "date_picker", "drawer_slide_over", 
-    "empty_state", "fab", "feature_matrix", "file_uploader", "footer", 
-    "hamburger_menu", "hero_section", "holy_grail", "image_gallery_lightbox", "infinite_scroll", 
-    "jump_to_section", "kanban_board", "logo_strip", "masonry_grid", "mega_menu", 
-    "modal_dialog", "navigation_bar", "pagination", "popover_tooltip", "pricing_table", 
-    "radio_checkbox_group", "search_bar", "select_dropdown", "sidebar_framework", "skeleton_loader", 
-    "slider_range", "spinner_loading_indicator", "split_screen", "statistic_metric_block", "stepper_progress", 
-    "tabs", "testimonial_block", "text_input_textarea", "timeline", "toast_snackbar", 
-    "toggle_switch", "z_pattern_layout"
-  ]
+    "styles": {
+        "modern_&_trend": [
+            "minimalism", "bento_grid", "glassmorphism", "aurora_gradient_mesh", "dark_luxury", 
+            "claymorphism", "flat_design", "dark_mode", "frosted_glass_light", "soft_pastel_minimal",
+            "clean_functionalism", "dark_glassmorphism"
+        ],
+        "experimental_&_raw": [
+            "brutalism", "neobrutalism", "handcrafted_zine", "editorial_magazine", 
+            "industrial_utilitarian", "maximalism", "neumorphism", "solarpunk", 
+            "wireframe_blueprint", "cyberpunk", "corporate_memphis"
+        ],
+        "nostalgic_&_retro": [
+            "pixel_art_8bit", "vaporwave", "retro_web", "y2k_frutiger_aero", "memphis_design", 
+            "retro_futurism", "synthwave", "psychedelic_groovy", "monospace_terminal"
+        ],
+        "artistic_&_textured": [
+            "abstract_expressionist", "grain_texture_matte", "holographic_iridescent", 
+            "metallic_chrome", "organic_natural", "pastel_kawaii", "newspaper_print",
+            "dopamine_design", "cottagecore"
+        ],
+        "design_heritage": [
+            "art_deco", "bauhaus", "swiss_design", "serif_luxury", "typographic_editorial", 
+            "skeuomorphism", "data_visualization", "material_design", "isometric_3d"
+        ]
+    },
+    "components": {
+        "layout_&_structure": [
+            "app_shell", "bento_grid", "card", "hero_section", "split_screen", 
+            "z_pattern_layout", "holy_grail", "sidebar_framework", "footer", "masonry_grid"
+        ],
+        "navigation_&_wayfinding": [
+            "navigation_bar", "hamburger_menu", "breadcrumbs", "pagination", 
+            "tabs", "stepper_progress", "mega_menu", "jump_to_section", "infinite_scroll"
+        ],
+        "forms_&_inputs": [
+            "button", "text_input_textarea", "toggle_switch", "select_dropdown", 
+            "slider_range", "date_picker", "file_uploader", "radio_checkbox_group", "fab"
+        ],
+        "indicators_&_feedback": [
+            "alert_callout_box", "badge_pill_tag", "banner_announcement_bar", 
+            "skeleton_loader", "spinner_loading_indicator", "toast_snackbar", "popover_tooltip"
+        ],
+        "content_blocks_&_data": [
+            "accordion", "avatar", "data_table", "kanban_board", "testimonial_block", 
+            "timeline", "statistic_metric_block", "carousel_slider", "cta_block", 
+            "image_gallery_lightbox", "empty_state", "feature_matrix", "logo_strip", "modal_dialog"
+        ]
+    }
 }

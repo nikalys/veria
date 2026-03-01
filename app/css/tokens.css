@@ -3,7 +3,7 @@
 :root {
     /* typography */
     --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    
+
     /* spacing */
     --space-xs: 0.25rem;
     --space-sm: 0.5rem;
@@ -17,42 +17,52 @@
     --transition-slow: 0.4s ease;
 
     /* elevations */
-    --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* theme: dark (default) */
-[data-theme="dark"], :root:not([data-theme="light"]) {
-    --bg-base: #121212; /* very dark grey */
+[data-theme="dark"],
+:root:not([data-theme="light"]) {
+    --bg-base: #121212;
+    /* very dark grey */
     --bg-surface: #1e1e1e;
     --bg-sidebar: #181818;
-    
-    --text-primary: #e0d0ff; /* light purple */
-    --text-secondary: #b0a0d0;
+
+    --text-primary: #e0d0ff;
+    /* light purple */
+    --text-secondary: #baa0d0;
     --text-muted: #6e6e7a;
-    
-    --accent-primary: #9d70ff;
-    --accent-secondary: #7b4dff;
-    
+
+    --accent-primary: #a27cbf;
+    --accent-secondary: #7f6196;
+
     --border-base: #2a2a2a;
     --border-subtle: #1f1f1f;
 }
 
 /* theme: light */
 [data-theme="light"] {
-    --bg-base: #f5f5f7; /* very light grey */
+    --bg-base: #faf9ff;
+    /* even softer lavender background */
     --bg-surface: #ffffff;
-    --bg-sidebar: #ededf0;
-    
-    --text-primary: #3a2a5a; /* darker purple */
-    --text-secondary: #5a4a7a;
-    --text-muted: #8e8e9a;
-    
-    --accent-primary: #6e30ff;
-    --accent-secondary: #5010df;
-    
-    --border-base: #e1e1e5;
-    --border-subtle: #f0f0f3;
+    --bg-sidebar: #f4f1ff;
+    /* lightened sidebar */
+
+    --text-primary: #815aa0;
+    /* lightened but still clear purple */
+    --text-secondary: #6c4989;
+    /* softer mid-tone purple */
+    --text-muted: #9c92b8;
+    /* lavender-tinted grey */
+
+    --accent-primary: #6f5193;
+    /* refined purple for buttons */
+    --accent-secondary: #a87bde;
+    /* deep violet hover */
+
+    --border-base: #e8e4f8;
+    --border-subtle: #f5f2ff;
 }
 
 /* identity rules */
@@ -66,7 +76,8 @@ body {
     font-family: var(--font-main);
     background-color: var(--bg-base);
     color: var(--text-primary);
-    text-transform: lowercase; /* global lowercase identity */
+    text-transform: lowercase;
+    /* global lowercase identity */
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     transition: background-color var(--transition-fast), color var(--transition-fast);

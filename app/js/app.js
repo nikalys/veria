@@ -24,36 +24,45 @@ const contentMount = document.getElementById('content-mount');
 async function init() {
     console.log('veria initializing...');
 
-    // Setup listeners immediately
+    // Setup listeners IMMEDIATELY (Atomic)
     document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
     document.getElementById('sidebar-toggle').addEventListener('click', toggleSidebar);
     window.addEventListener('hashchange', handleRouting);
 
-    // Load content data
+    // Header bookmarks shortcut
+    document.getElementById('bookmarks-btn')?.addEventListener('click', () => {
+        if (window.location.hash === '#/bookmarks') {
+            showBookmarks(); // Force re-render
+        } else {
+            window.location.hash = '#/bookmarks';
+        }
+    });
+
+    setupSearch();
+    setupInteractions();
+    setupLandingButtons();
+
+    // Load content data (Async)
+    const v = Date.now();
     try {
-        const response = await fetch('app/data/content.json');
+        const response = await fetch(`./app/data/content.json?v=${v}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         state.contentData = await response.json();
-        console.log(`✓ Loaded ${Object.keys(state.contentData.components || {}).length} components`);
-        console.log(`✓ Loaded ${Object.keys(state.contentData.styles || {}).length} styles`);
     } catch (err) {
         console.error('Failed to load content.json:', err);
-        // Fallback will show error state when trying to render entries
     }
 
-    // Load manifest (for sidebar nav structure)
+    // Load manifest
     try {
-        const response = await fetch('app/data/manifest.json');
+        const response = await fetch(`./app/data/manifest.json?v=${v}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         state.manifest = await response.json();
+        renderSidebar();
     } catch (err) {
-        console.warn('could not fetch manifest via network, trying local state...');
-        // Fallback or handle appropriately
+        console.error('could not fetch manifest:', err);
     }
 
-    renderSidebar();
-    setupSearch();
     handleRouting();
-    setupLandingButtons();
-    setupInteractions();
     updateBookmarksUI();
 }
 
@@ -72,11 +81,6 @@ function setupInteractions() {
         if (bookmarkBtn) {
             const entryId = bookmarkBtn.dataset.entryId;
             toggleBookmark(entryId);
-        }
-
-        // View bookmarks (Navbar)
-        if (e.target.closest('#bookmarks-btn')) {
-            showBookmarks();
         }
     });
 }
@@ -102,9 +106,28 @@ function setupSearch() {
 }
 
 function filterSidebar(query) {
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-        const label = link.textContent.toLowerCase();
-        link.parentElement.style.display = label.includes(query) ? 'block' : 'none';
+    const isSearching = query.length > 0;
+
+    document.querySelectorAll('.sidebar-category').forEach(cat => {
+        const title = cat.querySelector('.category-title').textContent.toLowerCase();
+        let hasVisibleChild = false;
+
+        cat.querySelectorAll('.sidebar-link').forEach(link => {
+            const label = link.textContent.toLowerCase();
+            const matches = label.includes(query) || title.includes(query);
+            link.parentElement.style.display = matches ? 'block' : 'none';
+            if (matches) hasVisibleChild = true;
+        });
+
+        cat.style.display = hasVisibleChild ? 'block' : 'none';
+
+        // Auto-expand if result found during search
+        if (isSearching && hasVisibleChild) {
+            cat.classList.remove('collapsed');
+            // Also expand the main section (Visual Styles / UI Components)
+            const mainSection = cat.closest('.sidebar-list').parentElement;
+            if (mainSection) mainSection.classList.remove('collapsed');
+        }
     });
 }
 
@@ -114,15 +137,32 @@ function filterSidebar(query) {
 function renderSidebar() {
     if (!state.manifest) return;
 
-    const render = (items, el, type) => {
-        el.innerHTML = items.map(id => `
-            <li>
-                <a href="#/${type}/${id}" class="sidebar-link">
-                    <span class="link-icon">${getIcon(type)}</span>
-                    <span class="link-label">${id.replace(/_/g, ' ')}</span>
-                </a>
-            </li>
-        `).join('');
+    const render = (categories, el, type) => {
+        if (!categories || typeof categories !== 'object') return;
+
+        el.innerHTML = Object.entries(categories).map(([catId, items]) => {
+            if (!Array.isArray(items)) return '';
+            return `
+                <div class="sidebar-category">
+                    <h3 class="category-title" onclick="this.parentElement.classList.toggle('collapsed')">
+                        ${catId.replace(/_/g, ' ')}
+                        <svg class="category-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <path d="M6 9l6 6 6-6"></path>
+                        </svg>
+                    </h3>
+                    <ul class="category-items">
+                        ${items.map(id => `
+                            <li>
+                                <a href="#/${type}/${id}" class="sidebar-link">
+                                    <span class="link-icon">${getIcon(type)}</span>
+                                    <span class="link-label">${id.replace(/_/g, ' ')}</span>
+                                </a>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+        }).join('');
     };
 
     render(state.manifest.styles, stylesList, 'styles');
@@ -153,6 +193,7 @@ function toggleTheme() {
 function toggleSidebar() {
     state.sidebarCollapsed = !state.sidebarCollapsed;
     sidebar.classList.toggle('expanded', !state.sidebarCollapsed);
+    document.getElementById('sidebar-toggle').classList.toggle('is-active', !state.sidebarCollapsed);
 }
 
 function getIcon(type) {
@@ -184,6 +225,11 @@ function handleRouting() {
     }
 
     const parts = hash.replace('#/', '').split('/');
+    if (parts[0] === 'bookmarks') {
+        showBookmarks();
+        return;
+    }
+
     if (parts.length >= 2) {
         renderEntry(parts[0], parts[1]);
     }
@@ -211,7 +257,7 @@ function renderLanding() {
             <div class="hero">
                 <div class="hero-brand">
                     <h1 class="hero-title">veria</h1>
-                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <svg class="hero-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <circle cx="12" cy="5" r="2.5"></circle>
                         <circle cx="18.5" cy="10" r="2.5" fill="currentColor"></circle>
                         <circle cx="16" cy="18" r="2.5"></circle>
@@ -461,10 +507,8 @@ function renderVisualsMatrix(type, id) {
                                 <span>${refId.replace(/_/g, ' ')}</span>
                                 <span class="view-link">view &rarr;</span>
                             </div>
-                            <div class="preview-window">
-                                <div class="mock-ui ${cleanRefId}">
-                                    ${refId.replace(/_/g, ' ')}
-                                </div>
+                            <div class="preview-window" data-style="${targetType === 'styles' ? cleanRefId : ''}">
+                                ${renderPreviewContent(targetType, cleanRefId)}
                             </div>
                         </div>
                     `;
@@ -620,6 +664,61 @@ function renderStyleShowcase(styleId) {
     `;
 }
 
+/**
+ * Render dynamic preview content for matrices and bookmarks
+ */
+function renderPreviewContent(type, id) {
+    if (type === 'styles') {
+        const styleTitle = id.replace(/_/g, ' ');
+        return `
+            <div class="style-showcase full-preview" data-style="${id}">
+                <div class="sc-card full-style-card">
+                    <div class="sc-card-img style-card-visual"></div>
+                    <div class="sc-card-content style-card-body">
+                        <button class="sc-btn sc-btn-primary full-style-btn">${styleTitle}</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Component Previews
+    const componentMap = {
+        'button': `<button class="sc-btn sc-btn-primary" style="transform: scale(0.8)">button</button>`,
+        'card': `
+            <div class="sc-card" style="width: 140px; transform: scale(0.7)">
+                <div class="sc-card-img" style="height: 40px"></div>
+                <div class="sc-card-content" style="padding: 8px">
+                    <div class="sc-card-title" style="font-size: 10px">card title</div>
+                </div>
+            </div>`,
+        'navigation_bar': `
+            <nav class="sc-navbar" style="width: 180px; transform: scale(0.6)">
+                <div class="sc-logo" style="font-size: 10px">logo</div>
+            </nav>`,
+        'input': `<input type="text" class="sc-input" placeholder="input..." style="width: 120px; transform: scale(0.8)">`,
+        'toggle': `<div class="sc-toggle on" style="transform: scale(0.8)"></div>`,
+        'badge_pill_tag': `<span class="sc-badge" style="transform: scale(0.8)">badge</span>`,
+        'accordion': `
+            <div class="sc-accordion" style="width: 140px; transform: scale(0.7)">
+                <div class="sc-accordion-header" style="padding: 8px; font-size: 10px">
+                    <span>header</span>
+                    <span>&darr;</span>
+                </div>
+            </div>`,
+        'alert_callout_box': `
+            <div class="sc-alert" style="width: 160px; transform: scale(0.6); font-size: 10px; padding: 10px;">
+                alert message
+            </div>`
+    };
+
+    // Find the closest match or default to text
+    const preview = componentMap[id] || componentMap[Object.keys(componentMap).find(key => id.includes(key))] ||
+        `<div class="mock-ui-text">${id.replace(/_/g, ' ')}</div>`;
+
+    return `<div class="component-preview-box">${preview}</div>`;
+}
+
 function setupTabs(type, id) {
     const tabs = document.querySelectorAll('.tab-btn');
     const container = document.getElementById('tab-content');
@@ -649,6 +748,15 @@ function toggleBookmark(id) {
     if (container) container.innerHTML = getBookmarkUI(id);
 
     updateBookmarksUI();
+}
+
+/**
+ * Handle removal specifically from the bookmarks page
+ */
+function removeBookmark(id, event) {
+    if (event) event.stopPropagation();
+    toggleBookmark(id);
+    showBookmarks(); // Refresh the view
 }
 
 function getBookmarkUI(id) {
@@ -682,7 +790,18 @@ function updateBookmarksUI() {
 
 function showBookmarks() {
     if (state.bookmarks.length === 0) {
-        alert("no bookmarks yet! explore the library to add some.");
+        contentMount.innerHTML = `
+            <div class="entry-page">
+                <header class="entry-header">
+                    <span class="entry-type">collection</span>
+                    <h1 class="entry-title">your bookmarks</h1>
+                </header>
+                <div class="error-state">
+                    <p>no bookmarks yet. explore the library to add some!</p>
+                    <button onclick="window.location.hash='#/'" class="shortcut-btn">go back</button>
+                </div>
+            </div>
+        `;
         return;
     }
 
@@ -698,15 +817,21 @@ function showBookmarks() {
         const type = isStyle ? 'styles' : 'components';
         const cleanId = id.replace(isStyle ? 'style_' : 'component_', '');
         return `
-                        <div class="preview-card" onclick="window.location.hash='#/${type}/${cleanId}'">
-                            <div class="preview-header">
-                                <span>${cleanId.replace(/_/g, ' ')}</span>
-                                <span class="view-link">view &rarr;</span>
-                            </div>
-                            <div class="preview-window">
-                                <div class="mock-ui ${cleanId}">
-                                    ${cleanId.replace(/_/g, ' ')}
+                        <div class="bookmark-unit">
+                            <div class="preview-card" onclick="window.location.hash='#/${type}/${cleanId}'">
+                                <div class="preview-header">
+                                    <span>${cleanId.replace(/_/g, ' ')}</span>
+                                    <span class="view-link">view &rarr;</span>
                                 </div>
+                                <div class="preview-window" data-style="${type === 'styles' ? cleanId : ''}">
+                                    ${renderPreviewContent(type, cleanId)}
+                                </div>
+                            </div>
+                            <div class="remove-bookmark-container">
+                                <button class="remove-bookmark-btn" onclick="removeBookmark('${id}', event)">
+                                    <span class="remove-text">remove</span>
+                                    <span class="remove-icon">&times;</span>
+                                </button>
                             </div>
                         </div>
                     `;
@@ -714,7 +839,6 @@ function showBookmarks() {
             </div>
         </div>
     `;
-    window.location.hash = '#/bookmarks';
 }
 
 document.addEventListener('DOMContentLoaded', init);
