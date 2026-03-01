@@ -138,6 +138,19 @@ body {
     align-items: center;
     justify-content: space-between;
     text-transform: uppercase;
+    transition: color var(--transition-fast);
+}
+
+.sidebar-title:hover {
+    color: var(--text-primary);
+}
+
+.sidebar-title .chevron {
+    transition: transform var(--transition-fast);
+}
+
+.collapsed .sidebar-title .chevron {
+    transform: rotate(-90deg);
 }
 
 .sidebar:not(.expanded) .sidebar-title {
@@ -146,6 +159,18 @@ body {
 
 .sidebar-list {
     list-style: none;
+    transition: max-height var(--transition-slow), opacity var(--transition-fast), margin var(--transition-fast);
+    max-height: 2000px;
+    /* arbitrary large value */
+    overflow: hidden;
+    opacity: 1;
+}
+
+.collapsed .sidebar-list {
+    max-height: 0;
+    opacity: 0;
+    margin: 0;
+    pointer-events: none;
 }
 
 .sidebar-link {
